@@ -1,0 +1,113 @@
+{
+  "project_info": {
+    "project_number": "127489176217",
+    "project_id": "workout-journal-90d24",
+    "storage_bucket": "workout-journal-90d24.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127489176217:android:a317c2f4dcb89b98733e08",
+        "android_client_info": {
+          "package_name": "com.blessing.felix.workout_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "127489176217-j91n297dqrfsu2q150o5svls9j09cg5j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBi3kWUUV24V6y3E2A572rBBF7E9-hqP3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "127489176217-a5n2n0etpj7dto0e78b7rqono31ttj9j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127489176217:android:8f708d74d5b9f1fd733e08",
+        "android_client_info": {
+          "package_name": "com.example.masters_workout"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "127489176217-m4keuvv60322tjmh3ikt3v0tbe53enjf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.masters_workout",
+            "certificate_hash": "4d7cc28323f4bf8a998fd1352e696a2d0c827276"
+          }
+        },
+        {
+          "client_id": "127489176217-j91n297dqrfsu2q150o5svls9j09cg5j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBi3kWUUV24V6y3E2A572rBBF7E9-hqP3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "127489176217-a5n2n0etpj7dto0e78b7rqono31ttj9j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127489176217:android:0e156c92e7751edf733e08",
+        "android_client_info": {
+          "package_name": "com.felixblessing.workoutjournal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "127489176217-l0fekvmhke565epuahp6cito2u9pi6vj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.felixblessing.workoutjournal",
+            "certificate_hash": "4d7cc28323f4bf8a998fd1352e696a2d0c827276"
+          }
+        },
+        {
+          "client_id": "127489176217-j91n297dqrfsu2q150o5svls9j09cg5j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBi3kWUUV24V6y3E2A572rBBF7E9-hqP3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "127489176217-a5n2n0etpj7dto0e78b7rqono31ttj9j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
