@@ -25,27 +25,6 @@ class AuthenticationBloc
       }
     });
 
-    /// log user in
-    on<LogInWithEmail>((event, emit) async {
-      try {
-        await authenticationRepositoryImpl.logInWithCredentials(
-          email: event.email,
-          password: event.password,
-        );
-      } catch (e) {
-        //TODO: handle error
-      }
-    });
-
-    /// log in with google
-    on<LogInWithGoogle>((event, emit) async {
-      try {
-        await authenticationRepositoryImpl.logInWithGoogle();
-      } catch (e) {
-        //TODO: handle error
-      }
-    });
-
     /// log user out
     on<LogOut>((event, emit) async {
       try {
