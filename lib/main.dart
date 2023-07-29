@@ -1,9 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:workout_app/presentation/pages/root_page/root_page.dart';
+import 'package:workout_app/dependency_injection.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await di.init(); // Dependency Injection
   runApp(const WorkoutApp());
 }
 
@@ -19,7 +22,7 @@ class WorkoutApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Text("Hello World"),
+      home: const RootPage(),
     );
   }
 }
