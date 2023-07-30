@@ -3,9 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:workout_app/constants.dart';
 import 'package:workout_app/dependency_injection.dart';
+import 'package:workout_app/presentation/bloc/login/forgot_password/forgot_password_bloc.dart';
 import 'package:workout_app/presentation/bloc/login/login_form/login_form_bloc.dart';
+import 'package:workout_app/presentation/pages/Login_page/sign_up_page.dart';
 
-const creamWhite = Color.fromARGB(255, 252, 251, 244);
+import 'widgets/button_loading_spinner.dart';
+import 'widgets/login_header.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -22,7 +25,10 @@ class LoginPage extends StatelessWidget {
             children: [
               Flexible(
                 flex: 1,
-                child: LoginHeader(),
+                child: LoginHeader(
+                  heading: 'Sign in to your\nAccount',
+                  subHeading: 'Sign in to your Account',
+                ),
               ),
               Flexible(
                 flex: 2,
@@ -31,39 +37,6 @@ class LoginPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class LoginHeader extends StatelessWidget {
-  const LoginHeader({super.key});
-  final TextStyle _textStyleBig = const TextStyle(
-    color: creamWhite,
-    fontSize: 34,
-    fontWeight: FontWeight.bold,
-  );
-  final TextStyle _textStyleSmall = const TextStyle(
-    color: creamWhite,
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: kBigPadding, bottom: kHugePadding),
-      color: const Color.fromARGB(255, 10, 30, 46),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text('Sign in to your\nAccount', style: _textStyleBig),
-          Text(
-            'Sign in to your Account',
-            style: _textStyleSmall,
-          ),
-        ],
       ),
     );
   }
@@ -159,7 +132,20 @@ class _LoginFormState extends State<_LoginForm> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
+                            child: const ForgotPassword(),
+                          );
+                        },
+                      );
+                    },
                     child: const Text('Forgot Password?'),
                   ),
                 ),
@@ -214,7 +200,19 @@ class _LoginFormState extends State<_LoginForm> {
                   children: [
                     const Text("Don't have an account?"),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        /* showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return const SignUpPage();
+                          },
+                        ); */
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignUpPage()));
+                      },
                       child: const Text('Sign Up'),
                     ),
                   ],
@@ -228,15 +226,79 @@ class _LoginFormState extends State<_LoginForm> {
   }
 }
 
-class ButtonLoadingSpinner extends StatelessWidget {
-  const ButtonLoadingSpinner({super.key});
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
+
+  @override
+  State<ForgotPassword> createState() => _ForgotPasswordState();
+}
+
+class _ForgotPasswordState extends State<ForgotPassword> {
+  final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      width: 24,
-      height: 24,
-      child: CircularProgressIndicator(),
+    return BlocProvider(
+      create: (context) => sl<ForgotPasswordBloc>(),
+      child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(kBigPadding),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Text(
+                  'Forgot Password?',
+                  style: TextStyle(
+                    fontSize: 34,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text('Enter your email to reset your password',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    )),
+                const SizedBox(height: kBigPadding),
+                TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                  onFieldSubmitted: (value) {
+                    context.read<ForgotPasswordBloc>().add(
+                        ForgotPasswordButtonPressed(
+                            email: emailController.text));
+                    Navigator.pop(context);
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("Email"),
+                    alignLabelWithHint: true,
+                    prefixIcon: Icon(Icons.email),
+                  ),
+                ),
+                const SizedBox(height: kBigPadding),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<ForgotPasswordBloc>().add(
+                        ForgotPasswordButtonPressed(
+                            email: emailController.text));
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(50),
+                  ),
+                  child: const Text(
+                    'Send Reset Link',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

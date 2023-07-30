@@ -57,4 +57,8 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   Future<void> logOut() async {
     await firebaseAuth.signOut();
   }
+
+  Future<void> resetPassword({required String email}) async {
+    await firebaseAuth.sendPasswordResetEmail(email: email);
+  }
 }
