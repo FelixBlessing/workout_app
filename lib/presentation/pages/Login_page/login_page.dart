@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:workout_app/constants.dart';
 import 'package:workout_app/dependency_injection.dart';
 import 'package:workout_app/presentation/bloc/login/login_form/login_form_bloc.dart';
 
 const creamWhite = Color.fromARGB(255, 252, 251, 244);
-const _bigPadding = 24.0;
-const _defaultPadding = 16.0;
-const _smallPadding = 12.0;
-const _hugePadding = 40.0;
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeigh = MediaQuery.of(context).size.height;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
-          height: screenHeigh,
+          height: screenHeight,
           child: const Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -54,7 +52,7 @@ class LoginHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: _bigPadding, bottom: _hugePadding),
+      padding: const EdgeInsets.only(left: kBigPadding, bottom: kHugePadding),
       color: const Color.fromARGB(255, 10, 30, 46),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,11 +89,11 @@ class _LoginFormState extends State<_LoginForm> {
       child: BlocBuilder<LoginFormBloc, LoginFormState>(
         builder: (context, state) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: _bigPadding),
+            padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const SizedBox(height: _defaultPadding),
+                const SizedBox(height: kDefaultPadding),
                 Form(
                   autovalidateMode: state.showValidationMessages,
                   child: Column(
@@ -116,9 +114,10 @@ class _LoginFormState extends State<_LoginForm> {
                           border: OutlineInputBorder(),
                           label: Text("Email"),
                           alignLabelWithHint: true,
+                          prefixIcon: Icon(Icons.email),
                         ),
                       ),
-                      const SizedBox(height: _bigPadding),
+                      const SizedBox(height: kBigPadding),
                       TextFormField(
                         controller: passwordController,
                         validator:
@@ -136,18 +135,27 @@ class _LoginFormState extends State<_LoginForm> {
                                 ),
                               );
                         },
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text("Password"),
+                        obscureText: !state.showPassword,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          label: const Text("Password"),
                           alignLabelWithHint: true,
-                          suffixIcon: Icon(Icons.remove_red_eye_outlined),
+                          prefixIcon: const Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              context
+                                  .read<LoginFormBloc>()
+                                  .add(TogglePasswordVisibility());
+                            },
+                            icon: state.showPassword
+                                ? const Icon(Icons.visibility)
+                                : const Icon(Icons.visibility_off),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                //const SizedBox(height: _smallPadding),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -167,21 +175,28 @@ class _LoginFormState extends State<_LoginForm> {
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
                   ),
-                  child: const Text('Login'),
+                  child: state.submittingType == SubmittingType.email
+                      ? const ButtonLoadingSpinner()
+                      : const Text(
+                          'Login',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                 ),
-                const SizedBox(height: _defaultPadding),
+                const SizedBox(height: kDefaultPadding),
                 const Row(
                   children: [
                     Expanded(
-                      child: Divider(),
+                      child: Divider(thickness: 2),
                     ),
+                    SizedBox(width: kSmallPadding),
                     Text("Or Login with"),
+                    SizedBox(width: kSmallPadding),
                     Expanded(
-                      child: Divider(),
+                      child: Divider(thickness: 2),
                     ),
                   ],
                 ),
-                const SizedBox(height: _defaultPadding),
+                const SizedBox(height: kDefaultPadding),
                 OutlinedButton(
                   onPressed: () {
                     context.read<LoginFormBloc>().add(LogInWithGoogle());
@@ -189,9 +204,11 @@ class _LoginFormState extends State<_LoginForm> {
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
                   ),
-                  child: const Text('Google'),
+                  child: state.submittingType == SubmittingType.google
+                      ? const ButtonLoadingSpinner()
+                      : const FaIcon(FontAwesomeIcons.google),
                 ),
-                const SizedBox(height: _defaultPadding),
+                const SizedBox(height: kDefaultPadding),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -207,6 +224,19 @@ class _LoginFormState extends State<_LoginForm> {
           );
         },
       ),
+    );
+  }
+}
+
+class ButtonLoadingSpinner extends StatelessWidget {
+  const ButtonLoadingSpinner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 24,
+      height: 24,
+      child: CircularProgressIndicator(),
     );
   }
 }

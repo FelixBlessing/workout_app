@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_app/infrastructure/repositories/authentication_repository_impl.dart';
@@ -16,7 +17,12 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
       if (validationEmailMessage != null || validationPasswordMessage != null) {
         emit(state.copyWith(showValidationMessages: AutovalidateMode.always));
       } else {
-        emit(state.copyWith(showValidationMessages: AutovalidateMode.disabled));
+        emit(
+          state.copyWith(
+            showValidationMessages: AutovalidateMode.disabled,
+            submittingType: SubmittingType.email,
+          ),
+        );
         try {
           await authenticationRepositoryImpl.logInWithCredentials(
             email: event.email!,
@@ -25,16 +31,23 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
         } catch (e) {
           //TODO: handle error
         }
+        emit(state.copyWith(submittingType: SubmittingType.none));
       }
     });
 
     /// log in with google
     on<LogInWithGoogle>((event, emit) async {
+      emit(state.copyWith(submittingType: SubmittingType.google));
       try {
         await authenticationRepositoryImpl.logInWithGoogle();
       } catch (e) {
         //TODO: handle error
       }
+      emit(state.copyWith(submittingType: SubmittingType.none));
+    });
+
+    on<TogglePasswordVisibility>((event, emit) {
+      emit(state.copyWith(showPassword: !state.showPassword));
     });
   }
 

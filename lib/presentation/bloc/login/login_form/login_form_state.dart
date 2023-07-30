@@ -1,51 +1,48 @@
 part of 'login_form_bloc.dart';
 
 class LoginFormState {
-  final bool isSubmitting;
+  final bool showPassword;
+  final SubmittingType submittingType;
   final AutovalidateMode showValidationMessages;
   final String? emailValidationMessage;
   final String? passwordValidationMessage;
-  final String? email;
-  final String? password;
 
   LoginFormState({
-    required this.isSubmitting,
+    required this.showPassword,
+    required this.submittingType,
     required this.showValidationMessages,
     required this.emailValidationMessage,
     this.passwordValidationMessage,
-    this.email,
-    this.password,
   });
 
   LoginFormState copyWith({
-    bool? isSubmitting,
+    bool? showPassword,
+    SubmittingType? submittingType,
     AutovalidateMode? showValidationMessages,
     String? emailValidationMessage,
     String? passwordValidationMessage,
-    String? email,
-    String? password,
   }) {
     return LoginFormState(
-      isSubmitting: isSubmitting ?? this.isSubmitting,
+      showPassword: showPassword ?? this.showPassword,
+      submittingType: submittingType ?? this.submittingType,
       showValidationMessages:
           showValidationMessages ?? this.showValidationMessages,
       emailValidationMessage:
           emailValidationMessage ?? this.emailValidationMessage,
       passwordValidationMessage:
           passwordValidationMessage ?? this.passwordValidationMessage,
-      email: email ?? this.email,
-      password: password ?? this.password,
     );
   }
 
   factory LoginFormState.initial() {
     return LoginFormState(
-      isSubmitting: false,
+      showPassword: false,
+      submittingType: SubmittingType.none,
       showValidationMessages: AutovalidateMode.disabled,
       emailValidationMessage: null,
       passwordValidationMessage: null,
-      email: null,
-      password: null,
     );
   }
 }
+
+enum SubmittingType { email, google, none }

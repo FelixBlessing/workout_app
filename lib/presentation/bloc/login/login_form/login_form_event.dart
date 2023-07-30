@@ -20,3 +20,5 @@ class LogInWithEmail extends LoginFormEvent {
 }
 
 class LogInWithGoogle extends LoginFormEvent {}
+
+class TogglePasswordVisibility extends LoginFormEvent {}
