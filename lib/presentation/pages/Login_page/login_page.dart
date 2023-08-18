@@ -6,6 +6,7 @@ import 'package:workout_app/constants.dart';
 import 'package:workout_app/dependency_injection.dart';
 import 'package:workout_app/presentation/bloc/login/forgot_password/forgot_password_bloc.dart';
 import 'package:workout_app/presentation/bloc/login/login_form/login_form_bloc.dart';
+import 'package:workout_app/presentation/helper/snackbar.dart';
 
 import 'widgets/button_loading_spinner.dart';
 import 'widgets/login_header.dart';
@@ -59,146 +60,162 @@ class _LoginFormState extends State<_LoginForm> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<LoginFormBloc>(),
-      child: BlocBuilder<LoginFormBloc, LoginFormState>(
+      child: BlocConsumer<LoginFormBloc, LoginFormState>(
+        listenWhen: (previous, current) {
+          return (previous.errorMessage?.isEmpty ?? true) &&
+              (current.errorMessage?.isNotEmpty ?? false);
+        },
+        listener: (context, state) {
+          final callback =
+              context.read<LoginFormBloc>().add(ResetErrorMessage());
+          showSnackbar(state.errorMessage!, context, onDismiss: () => callback);
+        },
         builder: (context, state) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const SizedBox(height: kDefaultPadding),
-                Form(
-                  autovalidateMode: state.showValidationMessages,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: emailController,
-                        validator: context.read<LoginFormBloc>().validateEmail,
-                        focusNode: emailFocusNode,
-                        keyboardType: TextInputType.emailAddress,
-                        onTapOutside: (event) => emailFocusNode.unfocus(),
-                        onFieldSubmitted: (value) {
-                          emailFocusNode.unfocus();
-                          passwordFocusNode.requestFocus();
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'test@email.com',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          border: OutlineInputBorder(),
-                          label: Text("Email"),
-                          alignLabelWithHint: true,
-                          prefixIcon: Icon(Icons.email),
-                        ),
-                      ),
-                      const SizedBox(height: kBigPadding),
-                      TextFormField(
-                        controller: passwordController,
-                        validator:
-                            context.read<LoginFormBloc>().validatePassword,
-                        focusNode: passwordFocusNode,
-                        keyboardType: TextInputType.visiblePassword,
-                        onTapOutside: (event) =>
-                            FocusScope.of(context).unfocus(),
-                        onFieldSubmitted: (value) {
-                          passwordFocusNode.unfocus();
-                          context.read<LoginFormBloc>().add(
-                                LogInWithEmail(
-                                  email: emailController.text,
-                                  password: passwordController.text,
-                                ),
-                              );
-                        },
-                        obscureText: !state.showPassword,
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          label: const Text("Password"),
-                          alignLabelWithHint: true,
-                          prefixIcon: const Icon(Icons.lock),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              context
-                                  .read<LoginFormBloc>()
-                                  .add(TogglePasswordVisibility());
+          return BlocBuilder<LoginFormBloc, LoginFormState>(
+            builder: (context, state) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const SizedBox(height: kDefaultPadding),
+                    Form(
+                      autovalidateMode: state.showValidationMessages,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: emailController,
+                            validator:
+                                context.read<LoginFormBloc>().validateEmail,
+                            focusNode: emailFocusNode,
+                            keyboardType: TextInputType.emailAddress,
+                            onTapOutside: (event) => emailFocusNode.unfocus(),
+                            onFieldSubmitted: (value) {
+                              emailFocusNode.unfocus();
+                              passwordFocusNode.requestFocus();
                             },
-                            icon: state.showPassword
-                                ? const Icon(Icons.visibility)
-                                : const Icon(Icons.visibility_off),
+                            decoration: const InputDecoration(
+                              hintText: 'test@email.com',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              border: OutlineInputBorder(),
+                              label: Text("Email"),
+                              alignLabelWithHint: true,
+                              prefixIcon: Icon(Icons.email),
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: kBigPadding),
+                          TextFormField(
+                            controller: passwordController,
+                            validator:
+                                context.read<LoginFormBloc>().validatePassword,
+                            focusNode: passwordFocusNode,
+                            keyboardType: TextInputType.visiblePassword,
+                            onTapOutside: (event) =>
+                                FocusScope.of(context).unfocus(),
+                            onFieldSubmitted: (value) {
+                              passwordFocusNode.unfocus();
+                              context.read<LoginFormBloc>().add(
+                                    LogInWithEmail(
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                    ),
+                                  );
+                            },
+                            obscureText: !state.showPassword,
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              label: const Text("Password"),
+                              alignLabelWithHint: true,
+                              prefixIcon: const Icon(Icons.lock),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  context
+                                      .read<LoginFormBloc>()
+                                      .add(TogglePasswordVisibility());
+                                },
+                                icon: state.showPassword
+                                    ? const Icon(Icons.visibility)
+                                    : const Icon(Icons.visibility_off),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        useSafeArea: true,
-                        context: context,
-                        builder: (context) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            margin: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom),
-                            child: const ForgotPassword(),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            useSafeArea: true,
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                margin: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom),
+                                child: const ForgotPassword(),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                    child: const Text('Forgot Password?'),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<LoginFormBloc>().add(
-                          LogInWithEmail(
-                            email: emailController.text,
-                            password: passwordController.text,
-                          ),
-                        );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                  ),
-                  child: state.submittingType == SubmittingType.email
-                      ? const ButtonLoadingSpinner()
-                      : const Text(
-                          'Login',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        child: const Text('Forgot Password?'),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<LoginFormBloc>().add(
+                              LogInWithEmail(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              ),
+                            );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                      ),
+                      child: state.submittingType == SubmittingType.email
+                          ? const ButtonLoadingSpinner()
+                          : const Text(
+                              'Login',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                    ),
+                    const SizedBox(height: kDefaultPadding),
+                    const Row(
+                      children: [
+                        Expanded(
+                          child: Divider(thickness: 2),
                         ),
-                ),
-                const SizedBox(height: kDefaultPadding),
-                const Row(
-                  children: [
-                    Expanded(
-                      child: Divider(thickness: 2),
+                        SizedBox(width: kSmallPadding),
+                        Text("Or Login with"),
+                        SizedBox(width: kSmallPadding),
+                        Expanded(
+                          child: Divider(thickness: 2),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: kSmallPadding),
-                    Text("Or Login with"),
-                    SizedBox(width: kSmallPadding),
-                    Expanded(
-                      child: Divider(thickness: 2),
+                    const SizedBox(height: kDefaultPadding),
+                    OutlinedButton(
+                      onPressed: () {
+                        context.read<LoginFormBloc>().add(LogInWithGoogle());
+                      },
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                      ),
+                      child: state.submittingType == SubmittingType.google
+                          ? const ButtonLoadingSpinner()
+                          : const FaIcon(FontAwesomeIcons.google),
                     ),
+                    const SizedBox(height: kDefaultPadding),
                   ],
                 ),
-                const SizedBox(height: kDefaultPadding),
-                OutlinedButton(
-                  onPressed: () {
-                    context.read<LoginFormBloc>().add(LogInWithGoogle());
-                  },
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                  ),
-                  child: state.submittingType == SubmittingType.google
-                      ? const ButtonLoadingSpinner()
-                      : const FaIcon(FontAwesomeIcons.google),
-                ),
-                const SizedBox(height: kDefaultPadding),
-              ],
-            ),
+              );
+            },
           );
         },
       ),

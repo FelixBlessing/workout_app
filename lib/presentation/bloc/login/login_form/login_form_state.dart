@@ -4,33 +4,27 @@ class LoginFormState {
   final bool showPassword;
   final SubmittingType submittingType;
   final AutovalidateMode showValidationMessages;
-  final String? emailValidationMessage;
-  final String? passwordValidationMessage;
+  final String? errorMessage;
 
   LoginFormState({
     required this.showPassword,
     required this.submittingType,
     required this.showValidationMessages,
-    required this.emailValidationMessage,
-    this.passwordValidationMessage,
+    this.errorMessage,
   });
 
   LoginFormState copyWith({
     bool? showPassword,
     SubmittingType? submittingType,
     AutovalidateMode? showValidationMessages,
-    String? emailValidationMessage,
-    String? passwordValidationMessage,
+    String? errorMessage,
   }) {
     return LoginFormState(
       showPassword: showPassword ?? this.showPassword,
       submittingType: submittingType ?? this.submittingType,
       showValidationMessages:
           showValidationMessages ?? this.showValidationMessages,
-      emailValidationMessage:
-          emailValidationMessage ?? this.emailValidationMessage,
-      passwordValidationMessage:
-          passwordValidationMessage ?? this.passwordValidationMessage,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
@@ -39,8 +33,7 @@ class LoginFormState {
       showPassword: false,
       submittingType: SubmittingType.none,
       showValidationMessages: AutovalidateMode.disabled,
-      emailValidationMessage: null,
-      passwordValidationMessage: null,
+      errorMessage: null,
     );
   }
 }

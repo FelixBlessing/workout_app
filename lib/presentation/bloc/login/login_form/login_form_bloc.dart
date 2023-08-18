@@ -25,20 +25,48 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
         );
         try {
           await authenticationRepositoryImpl.logInWithCredentials(
-            email: event.email!,
-            password: event.password!,
+            email: event.email,
+            password: event.password,
           );
         } catch (e) {
           if (e is FirebaseAuthException) {
             if (e.code == 'user-not-found') {
               try {
                 await authenticationRepositoryImpl.signUpWithCredentials(
-                  email: event.email!,
-                  password: event.password!,
+                  email: event.email,
+                  password: event.password,
                 );
               } catch (e) {
-                //TODO: handle error
+                emit(state.copyWith(
+                  errorMessage: e.toString(),
+                  submittingType: SubmittingType.none,
+                ));
+                return;
               }
+            } else if (e.code == 'wrong-password') {
+              emit(state.copyWith(
+                errorMessage: "wrong password",
+                submittingType: SubmittingType.none,
+              ));
+              return;
+            } else if (e.code == 'invalid-email') {
+              emit(state.copyWith(
+                errorMessage: "invalid email",
+                submittingType: SubmittingType.none,
+              ));
+              return;
+            } else if (e.code == 'user-disabled') {
+              emit(state.copyWith(
+                errorMessage: "user disabled",
+                submittingType: SubmittingType.none,
+              ));
+              return;
+            } else if (e.code == 'too-many-requests') {
+              emit(state.copyWith(
+                errorMessage: "too many requests",
+                submittingType: SubmittingType.none,
+              ));
+              return;
             }
           }
         }
@@ -52,13 +80,21 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
       try {
         await authenticationRepositoryImpl.logInWithGoogle();
       } catch (e) {
-        //TODO: handle error
+        emit(state.copyWith(
+          errorMessage: e.toString(),
+          submittingType: SubmittingType.none,
+        ));
+        return;
       }
       emit(state.copyWith(submittingType: SubmittingType.none));
     });
 
     on<TogglePasswordVisibility>((event, emit) {
       emit(state.copyWith(showPassword: !state.showPassword));
+    });
+
+    on<ResetErrorMessage>((event, emit) {
+      emit(state.copyWith(errorMessage: ''));
     });
   }
 

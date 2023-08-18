@@ -15,10 +15,12 @@ class ValidatePassword extends LoginFormEvent {
 
 class LogInWithEmail extends LoginFormEvent {
   LogInWithEmail({required this.email, required this.password});
-  final String? email;
-  final String? password;
+  final String email;
+  final String password;
 }
 
 class LogInWithGoogle extends LoginFormEvent {}
 
 class TogglePasswordVisibility extends LoginFormEvent {}
+
+class ResetErrorMessage extends LoginFormEvent {}
