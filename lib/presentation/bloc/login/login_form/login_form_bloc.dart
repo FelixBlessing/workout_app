@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_app/infrastructure/repositories/authentication_repository_impl.dart';
@@ -28,7 +29,18 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
             password: event.password!,
           );
         } catch (e) {
-          //TODO: handle error
+          if (e is FirebaseAuthException) {
+            if (e.code == 'user-not-found') {
+              try {
+                await authenticationRepositoryImpl.signUpWithCredentials(
+                  email: event.email!,
+                  password: event.password!,
+                );
+              } catch (e) {
+                //TODO: handle error
+              }
+            }
+          }
         }
         emit(state.copyWith(submittingType: SubmittingType.none));
       }

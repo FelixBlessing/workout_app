@@ -32,6 +32,15 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     return user;
   }
 
+  Future<UserCredential> signUpWithCredentials(
+      {required String email, required String password}) async {
+    final user = await firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return user;
+  }
+
   /// Logs the user in with Google.
   @override
   Future<void> logInWithGoogle() async {
