@@ -13,8 +13,10 @@ class ForgotPasswordBloc
     on<ForgotPasswordButtonPressed>((event, emit) async {
       try {
         await authenticationRepositoryImpl.resetPassword(email: event.email!);
+        emit(RestorePasswordSuccess());
       } catch (e) {
         // TODO handle error
+        emit(RestorePasswordSuccess());
       }
     });
   }
