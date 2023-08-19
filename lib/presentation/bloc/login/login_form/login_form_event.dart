@@ -21,6 +21,12 @@ class LogInWithEmail extends LoginFormEvent {
 
 class LogInWithGoogle extends LoginFormEvent {}
 
+class SignUpWithEmail extends LoginFormEvent {
+  SignUpWithEmail({required this.email, required this.password});
+  final String email;
+  final String password;
+}
+
 class TogglePasswordVisibility extends LoginFormEvent {}
 
 class ResetErrorMessage extends LoginFormEvent {}

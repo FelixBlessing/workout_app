@@ -56,19 +56,55 @@ class _LoginFormState extends State<_LoginForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  bool _listenWhen(LoginFormState previous, LoginFormState current) {
+    /// listen for error message
+    final listenError = (previous.errorMessage?.isEmpty ?? true) &&
+        (current.errorMessage?.isNotEmpty ?? false);
+
+    /// listen for sign up bottom sheet
+    final listenSignUp = previous.showSignUpBottomSheet == false &&
+        current.showSignUpBottomSheet == true;
+
+    return listenError || listenSignUp;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<LoginFormBloc>(),
       child: BlocConsumer<LoginFormBloc, LoginFormState>(
         listenWhen: (previous, current) {
-          return (previous.errorMessage?.isEmpty ?? true) &&
-              (current.errorMessage?.isNotEmpty ?? false);
+          return _listenWhen(previous, current);
         },
         listener: (context, state) {
-          final callback =
-              context.read<LoginFormBloc>().add(ResetErrorMessage());
-          showSnackbar(state.errorMessage!, context, onDismiss: () => callback);
+          if (state.errorMessage?.isNotEmpty ?? false) {
+            final callback =
+                context.read<LoginFormBloc>().add(ResetErrorMessage());
+            showSnackbar(
+              state.errorMessage!,
+              context,
+              onDismiss: () => callback,
+            );
+          } else if (state.showSignUpBottomSheet) {
+            final loginFormBloc = context.read<LoginFormBloc>();
+            showModalBottomSheet(
+              isScrollControlled: true,
+              useSafeArea: true,
+              context: context,
+              builder: (context) {
+                return Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  margin: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: SignUpBottomSheet(
+                    email: emailController.text,
+                    password: passwordController.text,
+                    loginFormBloc: loginFormBloc,
+                  ),
+                );
+              },
+            );
+          }
         },
         builder: (context, state) {
           return BlocBuilder<LoginFormBloc, LoginFormState>(
@@ -218,6 +254,72 @@ class _LoginFormState extends State<_LoginForm> {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class SignUpBottomSheet extends StatelessWidget {
+  const SignUpBottomSheet({
+    super.key,
+    required this.email,
+    required this.password,
+    required this.loginFormBloc,
+  });
+  final String email;
+  final String password;
+  final LoginFormBloc loginFormBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(kBigPadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Column(
+            children: [
+              Text(
+                "Hoppla...",
+                style: textStyleBig,
+              ),
+              SizedBox(height: kDefaultPadding),
+              Text(
+                "Es scheint diesen Account nicht zu geben. Magst du dich mit diesen Anmeldedaten registrieren?",
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text(email),
+              Text(password),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    loginFormBloc
+                        .add(SignUpWithEmail(email: email, password: password));
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Registrieren"),
+                ),
+              ),
+              const SizedBox(
+                width: kSmallPadding,
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Abbrechen"),
+                ),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

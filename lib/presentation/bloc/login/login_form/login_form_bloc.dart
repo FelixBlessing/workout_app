@@ -31,18 +31,11 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
         } catch (e) {
           if (e is FirebaseAuthException) {
             if (e.code == 'user-not-found') {
-              try {
-                await authenticationRepositoryImpl.signUpWithCredentials(
-                  email: event.email,
-                  password: event.password,
-                );
-              } catch (e) {
-                emit(state.copyWith(
-                  errorMessage: e.toString(),
-                  submittingType: SubmittingType.none,
-                ));
-                return;
-              }
+              emit(state.copyWith(
+                showSignUpBottomSheet: true,
+                submittingType: SubmittingType.none,
+              ));
+              return;
             } else if (e.code == 'wrong-password') {
               emit(state.copyWith(
                 errorMessage: "wrong password",
@@ -95,6 +88,23 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
 
     on<ResetErrorMessage>((event, emit) {
       emit(state.copyWith(errorMessage: ''));
+    });
+
+    on<SignUpWithEmail>((event, emit) async {
+      emit(state.copyWith(submittingType: SubmittingType.email));
+      try {
+        await authenticationRepositoryImpl.signUpWithCredentials(
+          email: event.email,
+          password: event.password,
+        );
+      } catch (e) {
+        emit(state.copyWith(
+          errorMessage: e.toString(),
+          submittingType: SubmittingType.none,
+        ));
+        return;
+      }
+      emit(state.copyWith(submittingType: SubmittingType.none));
     });
   }
 
