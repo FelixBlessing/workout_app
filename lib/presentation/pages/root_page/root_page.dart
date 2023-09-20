@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_app/dependency_injection.dart';
 import 'package:workout_app/presentation/pages/Login_page/login_page.dart';
-import 'package:workout_app/presentation/pages/landing_page/landing_page.dart';
+import 'package:workout_app/presentation/pages/workouts_page/landing_page.dart';
 import 'package:workout_app/presentation/bloc/login/authentication/authentication_bloc.dart';
 
 class RootPage extends StatelessWidget {
