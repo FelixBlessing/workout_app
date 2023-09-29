@@ -8,7 +8,7 @@ part 'login_form_state.dart';
 
 class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
   final AuthenticationRepositoryImpl authenticationRepositoryImpl;
-  LoginFormBloc({required this.authenticationRepositoryImpl})
+  LoginFormBloc(this.authenticationRepositoryImpl)
       : super(LoginFormState.initial()) {
     /// log user in with email and password
     on<LogInWithEmail>((event, emit) async {

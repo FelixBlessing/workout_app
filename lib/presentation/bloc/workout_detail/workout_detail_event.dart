@@ -4,19 +4,21 @@ part of 'workout_detail_bloc.dart';
 sealed class WorkoutDetailEvent {}
 
 class InitializeWorkout extends WorkoutDetailEvent {
-  final Workout? workout;
+  final String? workoutId;
 
-  InitializeWorkout({this.workout});
+  InitializeWorkout({this.workoutId});
 }
 
-class AddExercise extends WorkoutDetailEvent {
-  final List<Exercise> exercise;
-  AddExercise({required this.exercise});
+class DeleteWorkout extends WorkoutDetailEvent {
+  final String workoutId;
+  DeleteWorkout({required this.workoutId});
 }
+
+class AddExercise extends WorkoutDetailEvent {}
 
 class RemoveExercise extends WorkoutDetailEvent {
-  final Exercise exercise;
-  RemoveExercise({required this.exercise});
+  final String id;
+  RemoveExercise({required this.id});
 }
 
 class SaveWorkout extends WorkoutDetailEvent {}

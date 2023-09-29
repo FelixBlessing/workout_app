@@ -8,7 +8,7 @@ part 'forgot_password_state.dart';
 class ForgotPasswordBloc
     extends Bloc<ForgotPasswordEvent, ForgotPasswordState> {
   final AuthenticationRepositoryImpl authenticationRepositoryImpl;
-  ForgotPasswordBloc({required this.authenticationRepositoryImpl})
+  ForgotPasswordBloc(this.authenticationRepositoryImpl)
       : super(ForgotPasswordInitial()) {
     on<ForgotPasswordButtonPressed>((event, emit) async {
       try {

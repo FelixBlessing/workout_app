@@ -9,9 +9,16 @@ final class WorkoutsDataIsLoading extends WorkoutsState {}
 
 final class WorkoutsDataIsLoaded extends WorkoutsState {
   final List<Workout> workouts;
-  final List<Exercise> exercise;
 
-  WorkoutsDataIsLoaded({required this.workouts, required this.exercise});
+  WorkoutsDataIsLoaded({required this.workouts});
+
+  WorkoutsDataIsLoaded copyWith({
+    List<Workout>? workouts,
+  }) {
+    return WorkoutsDataIsLoaded(
+      workouts: workouts ?? this.workouts,
+    );
+  }
 }
 
 final class WorkoutsHasError extends WorkoutsState {}

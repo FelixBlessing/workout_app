@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gif/flutter_gif.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:workout_app/constants.dart';
-import 'package:workout_app/dependency_injection.dart';
+import 'package:workout_app/infrastructure/repositories/authentication_repository_impl.dart';
 import 'package:workout_app/presentation/bloc/login/forgot_password/forgot_password_bloc.dart';
 import 'package:workout_app/presentation/bloc/login/login_form/login_form_bloc.dart';
 import 'package:workout_app/presentation/helper/snackbar.dart';
@@ -71,7 +71,8 @@ class _LoginFormState extends State<_LoginForm> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<LoginFormBloc>(),
+      create: (context) =>
+          LoginFormBloc(context.read<AuthenticationRepositoryImpl>()),
       child: BlocConsumer<LoginFormBloc, LoginFormState>(
         listenWhen: (previous, current) {
           return _listenWhen(previous, current);
@@ -338,7 +339,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<ForgotPasswordBloc>(),
+      create: (context) =>
+          ForgotPasswordBloc(context.read<AuthenticationRepositoryImpl>()),
       child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
         builder: (context, state) {
           return AnimatedSwitcher(

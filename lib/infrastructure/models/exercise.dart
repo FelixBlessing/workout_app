@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 class Exercise {
   final String id;
   final String name;
@@ -12,6 +14,9 @@ class Exercise {
     this.numberOfSets,
     this.numberOfRepetition,
   });
+
+  factory Exercise.empty() =>
+      Exercise(id: const Uuid().v4(), name: "Neue Übung", checked: false);
 
   Exercise copyWith({
     String? id,
